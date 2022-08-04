@@ -6,10 +6,9 @@
     height="450"
     class="my-canvas"
     @mousedown="handleMouseDown"
-    @mouseup="handleMouseUp"
   ></canvas>
   <br />
-  <Tools :handleClear="handleClear" />
+  <Tools :points="points" :handleClear="handleClear" :handleDraw="handleDraw" />
 </template>
 
 <script lang="ts">
@@ -28,14 +27,12 @@ export default defineComponent({
   },
   setup() {
     const cvs = ref<HTMLCanvasElement>();
-    const isDrag = ref<boolean>(false);
     const drawHelper = reactive<DrawHelper>(
       new DrawHelper(cvs.value?.getContext("2d") ?? undefined)
     );
     const points = ref<Array<Point>>([]);
 
     const handleMouseDown = (e: MouseEvent) => {
-      isDrag.value = true;
       points.value.push({ x: e.offsetX, y: e.offsetY });
       drawHelper.drawPoint({ x: e.offsetX, y: e.offsetY });
     };
@@ -44,6 +41,11 @@ export default defineComponent({
       points.value = [];
       drawHelper.clear();
     };
+
+    const handleDraw = () => {
+      drawHelper.drawBezier(points.value, 0);
+    };
+
     onMounted(() => {
       if (cvs.value) {
         drawHelper.ctx = cvs.value.getContext("2d")!;
@@ -52,21 +54,12 @@ export default defineComponent({
 
     return {
       cvs,
-      points,
+      points: points.value,
       drawHelper,
       handleMouseDown,
       handleClear,
+      handleDraw,
     };
-  },
-  watch: {
-    points: {
-      handler(newVal) {
-        if (newVal.length > 0) {
-          this.drawHelper.drawBezier(newVal, 0);
-        }
-      },
-      deep: true,
-    },
   },
 });
 </script>

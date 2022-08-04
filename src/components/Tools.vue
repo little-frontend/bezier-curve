@@ -1,34 +1,29 @@
 <template>
   <div>
-    <div>
-      <button @click="clear">Clear</button>
+    <div style="display: flex; gap: 20px; align-items: start">
+      <button @click="handleClear">Clear</button>
+      <div>
+        <button :disabled="disabled" @click="handleDraw">Start draw</button>
+        <p v-show="disabled">
+          Please draw a few dots (>= 3) in the above drawing area first
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, computed } from "vue";
 
 export default defineComponent({
-  props: ["handleAddPoint", "handleClear"],
+  props: ["points", "handleClear", "handleDraw"],
 
   setup(props) {
-    // const pointX = ref<number>(0);
-    // const pointY = ref<number>(0);
-    // // const removeX = ref<number>(0);
-    // // const removeY = ref<number>(0);
-    // const addPoint = () => {
-    //   props.handleAddPoint(pointX.value, pointY.value);
-    // };
+    const isDisabled = computed(() => props.points.length <= 2);
 
-    const clear = () => {
-      props.handleClear();
-    };
     return {
-      // pointX,
-      // pointY,
-      // addPoint,
-      clear,
+      ...props,
+      disabled: isDisabled,
     };
   },
 });
