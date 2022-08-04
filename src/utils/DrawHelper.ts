@@ -27,6 +27,7 @@ class DrawHelper {
 
   public drawPoint({ x, y }: Point, color?: string): void {
     if (!this._ctx) return;
+    this._ctx.beginPath();
     this._ctx.moveTo(x, y);
     this._ctx.arc(x, y, 5, 0, Math.PI * 2);
     this._ctx.fillStyle = color || "#666";
